@@ -6,6 +6,8 @@ import {ReplaceStep} from "./replace_step"
 
 // :: (number, number, Mark) → this
 // Add the given mark to the inline content between `from` and `to`.
+//
+// @cn 将给定的 mark 添加到 `from` 到 `to` 之间的内联节点中。
 Transform.prototype.addMark = function(from, to, mark) {
   let removed = [], added = [], removing = null, adding = null
   this.doc.nodesBetween(from, to, (node, pos, parent) => {
@@ -41,6 +43,9 @@ Transform.prototype.addMark = function(from, to, mark) {
 // is a single mark, remove precisely that mark. When it is a mark type,
 // remove all marks of that type. When it is null, remove all marks of
 // any type.
+//
+// @cn 将 `from` 到 `to` 之间的内联节点上给定的的 mark 移除。当 `mark` 是一个单独的 mark 时，则精确移除这个 mark。
+// 如果是一个 mark 类型时，则移除所有的该类型的 mark。如果是 null，移除其内所有类型的 mark。
 Transform.prototype.removeMark = function(from, to, mark = null) {
   let matched = [], step = 0
   this.doc.nodesBetween(from, to, (node, pos) => {
@@ -81,6 +86,9 @@ Transform.prototype.removeMark = function(from, to, mark = null) {
 // that don't match the given new parent node type. Accepts an
 // optional starting [content match](#model.ContentMatch) as third
 // argument.
+//
+// @cn 从给定的 pos 移除与给定的新的父级节点类型不兼容的所有 marks 和节点们。
+// 接受一个可选的起始 [content match](#model.ContentMatch) 作为第三个参数。
 Transform.prototype.clearIncompatible = function(pos, parentType, match = parentType.contentMatch) {
   let node = this.doc.nodeAt(pos)
   let delSteps = [], cur = pos + 1

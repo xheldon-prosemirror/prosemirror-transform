@@ -4,6 +4,8 @@ import {Step, StepResult} from "./step"
 import {StepMap} from "./map"
 
 // ::- Replace a part of the document with a slice of new content.
+//
+// @cn 用含有新内容的 slice 来替换文档的一部分。
 export class ReplaceStep extends Step {
   // :: (number, number, Slice, ?bool)
   // The given `slice` should fit the 'gap' between `from` and
@@ -13,6 +15,10 @@ export class ReplaceStep extends Step {
   // from and to is not just a sequence of closing and then opening
   // tokens (this is to guard against rebased replace steps
   // overwriting something they weren't supposed to).
+  //
+  // @cn 给定的 slice 应该适应这个介于 `from` 和 `to` 之间的 「gap」，即 slice 两侧的深度和各自所接起来的位置深度必须是相同的，且 slice 周围
+  // 的节点必须能够接起来。当 `structure` 为 true 的时候，如果介意 from 和 to 之间的内容不是连续的先闭合后开放的标签，则 step 将会失败（这是为了
+  // 保证避免 rebased 的 replace step 意外覆盖了一些东西）。
   constructor(from, to, slice, structure) {
     super()
     this.from = from
@@ -76,12 +82,17 @@ Step.jsonID("replace", ReplaceStep)
 // ::- Replace a part of the document with a slice of content, but
 // preserve a range of the replaced content by moving it into the
 // slice.
+//
+// @cn 用一个 slice 的内容替换文档的一部分，不过会通过将被替换内容移动到 slice 中的方式来保留它的一个 range。
 export class ReplaceAroundStep extends Step {
   // :: (number, number, number, number, Slice, number, ?bool)
   // Create a replace-around step with the given range and gap.
   // `insert` should be the point in the slice into which the content
   // of the gap should be moved. `structure` has the same meaning as
   // it has in the [`ReplaceStep`](#transform.ReplaceStep) class.
+  //
+  // @cn 用给定的 range 和 gap 来新建一个 replace-around step。 `insert` 应该指向的是在 slice 中 gap 的内容应该被放置的位置。
+  // `structure` 有与它在 [`ReplaceStep`](#transform.ReplaceStep) 类中相同的含义。
   constructor(from, to, gapFrom, gapTo, slice, insert, structure) {
     super()
     this.from = from

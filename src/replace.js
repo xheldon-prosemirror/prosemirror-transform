@@ -9,6 +9,9 @@ import {insertPoint} from "./structure"
 // [step](#transform.Step) that inserts it. Will return null if
 // there's no meaningful way to insert the slice here, or inserting it
 // would be a no-op (an empty slice over an empty range).
+//
+// @cn 将一个 slice 「恰当的」放到文档中给定的位置，会生成一个进行插入操作的 step。如果没有一个有意义的途径来插入该 slice，或者插入的 slice
+// 没有意义（比如一个空的 slice 带着空的 range）则返回 null。
 export function replaceStep(doc, from, to = from, slice = Slice.empty) {
   if (from == to && !slice.size) return null
 
@@ -21,6 +24,8 @@ export function replaceStep(doc, from, to = from, slice = Slice.empty) {
 // :: (number, ?number, ?Slice) → this
 // Replace the part of the document between `from` and `to` with the
 // given `slice`.
+//
+// @cn 用给定的 `slice` 替换在 `from` 和 `to` 之间的这部分文档。
 Transform.prototype.replace = function(from, to = from, slice = Slice.empty) {
   let step = replaceStep(this.doc, from, to, slice)
   if (step) this.step(step)
@@ -30,18 +35,24 @@ Transform.prototype.replace = function(from, to = from, slice = Slice.empty) {
 // :: (number, number, union<Fragment, Node, [Node]>) → this
 // Replace the given range with the given content, which may be a
 // fragment, node, or array of nodes.
+//
+// @cn 用给定的内容替换给定过的 range，该内容可能是一个 fragment、节点、或者节点数组。
 Transform.prototype.replaceWith = function(from, to, content) {
   return this.replace(from, to, new Slice(Fragment.from(content), 0, 0))
 }
 
 // :: (number, number) → this
 // Delete the content between the given positions.
+//
+// @cn 删除给定位置之间的内容。
 Transform.prototype.delete = function(from, to) {
   return this.replace(from, to, Slice.empty)
 }
 
 // :: (number, union<Fragment, Node, [Node]>) → this
 // Insert the given content at the given position.
+//
+// @cn 在给定的位置插入给定的内容。
 Transform.prototype.insert = function(pos, content) {
   return this.replaceWith(pos, pos, content)
 }
@@ -346,6 +357,11 @@ function invalidMarks(type, fragment, start) {
 // including an open parent node from the slice that _is_ marked as
 // [defining](#model.NodeSpec.defining).
 //
+// @cn 用给定的 slice 替换文档的一个 range，用 `from`、`to` 以及 slice 的 [`openStart`](#model.Slice.openStart) 属性
+// 作为参照，而不是固定的起始和结束点。这个方法可能会使要替换的范围变大，或者会关闭在 slice 中开放的节点以更符合所谓 「WYSIWYG」的预期，
+// 如果父级节点配置对象是 [non-defining](#model.NodeSpec.defining) 的，则替换内容会完全覆盖被替换区域，
+// 如果是 [defining](#model.NodeSpec.defining) 的，则会包含一个来自于 slice 的打开的父级节点。
+//
 // This is the method, for example, to handle paste. The similar
 // [`replace`](#transform.Transform.replace) method is a more
 // primitive tool which will _not_ move the start and end of its given
@@ -444,6 +460,10 @@ function closeFragment(fragment, depth, oldOpen, newOpen, parent) {
 // that does allow the given node to be placed. When the given range
 // completely covers a parent node, this method may completely replace
 // that parent node.
+//
+// @cn 用给定的 node 替换一个由给定 `from` 和 `to` 模糊确定的 range，而不是一个精确的位置。
+// 如果当 from 和 to 相同且都位于父级节点的起始或者结尾位置，而给定的 node 并不适合此位置的时候，该方法可能将 from 和 to 的范围 _扩大_ 到
+// 超出父级节点以允许给定的 node 被放置，如果给定的 range（from 和 to 形成的）完全覆盖了一个父级节点，则该方法可能完全替换掉这个父级节点。
 Transform.prototype.replaceRangeWith = function(from, to, node) {
   if (!node.isInline && from == to && this.doc.resolve(from).parent.content.size) {
     let point = insertPoint(this.doc, from, node.type)
@@ -455,6 +475,10 @@ Transform.prototype.replaceRangeWith = function(from, to, node) {
 // :: (number, number) → this
 // Delete the given range, expanding it to cover fully covered
 // parent nodes until a valid replace is found.
+//
+// @cn 删除给定的 range，会将该 range 扩大到完全覆盖父级节点，直到找到一个有效的替换为止。
+//
+// @comment 有些 range 两侧在不同深度的节点中，因此会先将二者的值扩展到与二者中深度与较小的那个保持一致以形成完全覆盖一个父级节点的 range。
 Transform.prototype.deleteRange = function(from, to) {
   let $from = this.doc.resolve(from), $to = this.doc.resolve(to)
   let covered = coveredDepths($from, $to)

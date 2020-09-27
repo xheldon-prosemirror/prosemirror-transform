@@ -13,6 +13,8 @@ function mapFragment(fragment, f, parent) {
 }
 
 // ::- Add a mark to all inline content between two positions.
+//
+// @cn 在给定的两个位置中的所有内联元素上添加一个 mark。
 export class AddMarkStep extends Step {
   // :: (number, number, Mark)
   constructor(from, to, mark) {
@@ -65,6 +67,8 @@ export class AddMarkStep extends Step {
 Step.jsonID("addMark", AddMarkStep)
 
 // ::- Remove a mark from all inline content between two positions.
+//
+// @cn 在给定的两个位置中的所有内联元素上移除一个 mark。
 export class RemoveMarkStep extends Step {
   // :: (number, number, Mark)
   constructor(from, to, mark) {

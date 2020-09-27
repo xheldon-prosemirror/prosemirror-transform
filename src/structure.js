@@ -12,6 +12,9 @@ function canCut(node, start, end) {
 // Try to find a target depth to which the content in the given range
 // can be lifted. Will not go across
 // [isolating](#model.NodeSpec.isolating) parent nodes.
+//
+// @cn 尝试寻找一个目标深度以让给定的 range 内的内容可以被提升（深度）。不会考虑有属性 [isolating](#model.NodeSpec.isolating)
+// 存在的父级节点。
 export function liftTarget(range) {
   let parent = range.parent
   let content = parent.content.cutByIndex(range.startIndex, range.endIndex)
@@ -30,6 +33,9 @@ export function liftTarget(range) {
 // the depth specified by `target`. You'll probably want to use
 // [`liftTarget`](#transform.liftTarget) to compute `target`, to make
 // sure the lift is valid.
+//
+// @cn 如果 range 内容前后有同级内容，则会将给定 range 从其父级节点中分割，然后将其沿树移动到由 `target`
+// 指定的深度。你可能想要使用 [`liftTarget`](#transform.liftTarget) 来计算 `target`，以保证这个沿着树的提升是有效的。
 Transform.prototype.lift = function(range, target) {
   let {$from, $to, depth} = range
 
@@ -67,6 +73,11 @@ Transform.prototype.lift = function(range, target) {
 // could be found. When `innerRange` is given, that range's content is
 // used as the content to fit into the wrapping, instead of the
 // content of `range`.
+//
+// @cn 尝试找到一个有效的方式来用给定的节点类型包裹给定 range 的内容。如果必要的话，可能会在包裹节点的内部和周围生成额外的节点。
+// 如果没有可用的包裹方式则返回 null。当 `innerRange` 给定的时候，该 range 的内容将会被作为被包裹的内容，而不是 `range` 的内容。
+//
+// @comment 需要研究一下 range 和 innerRange 的区别，若 range 包含多个同级节点和 range 只含有一个节点是否有区别？
 export function findWrapping(range, nodeType, attrs, innerRange = range) {
   let around = findWrappingOutside(range, nodeType)
   let inner = around && findWrappingInside(innerRange, nodeType)
@@ -101,6 +112,9 @@ function findWrappingInside(range, type) {
 // Wrap the given [range](#model.NodeRange) in the given set of wrappers.
 // The wrappers are assumed to be valid in this position, and should
 // probably be computed with [`findWrapping`](#transform.findWrapping).
+//
+// @cn 用规定的包裹节点集合来包裹给定的 [range](#model.NodeRange)。包裹节点们会被假定是适合当前位置的，其应该被 [`findWrapping`](#transform.findWrapping)
+// 方法合适的计算出来。
 Transform.prototype.wrap = function(range, wrappers) {
   let content = Fragment.empty
   for (let i = wrappers.length - 1; i >= 0; i--)
@@ -113,6 +127,10 @@ Transform.prototype.wrap = function(range, wrappers) {
 // :: (number, ?number, NodeType, ?Object) → this
 // Set the type of all textblocks (partly) between `from` and `to` to
 // the given node type with the given attributes.
+//
+// @cn 将介于 `from` 和 `to` 之间的所有的文本块（部分地）设置成带有给定 attributes 的给定的节点类型。
+//
+// @comment 为什么是「部分的」是因为有些文本块或许不能被改变类型。
 Transform.prototype.setBlockType = function(from, to = from, type, attrs) {
   if (!type.isTextblock) throw new RangeError("Type given to setBlockType should be a textblock")
   let mapFrom = this.steps.length
@@ -138,6 +156,8 @@ function canChangeType(doc, pos, type) {
 // :: (number, ?NodeType, ?Object, ?[Mark]) → this
 // Change the type, attributes, and/or marks of the node at `pos`.
 // When `type` isn't given, the existing node type is preserved,
+//
+// @cn 在给定的 `pos` 处改变节点的类型、attributes、或者/和 marks。如果 `type` 没有给，则保留当前节点的类型。
 Transform.prototype.setNodeMarkup = function(pos, type, attrs, marks) {
   let node = this.doc.nodeAt(pos)
   if (!node) throw new RangeError("No node at given position")
@@ -155,6 +175,8 @@ Transform.prototype.setNodeMarkup = function(pos, type, attrs, marks) {
 
 // :: (Node, number, number, ?[?{type: NodeType, attrs: ?Object}]) → bool
 // Check whether splitting at the given position is allowed.
+//
+// @cn 检查给定的位置是否允许分割。
 export function canSplit(doc, pos, depth = 1, typesAfter) {
   let $pos = doc.resolve(pos), base = $pos.depth - depth
   let innerType = (typesAfter && typesAfter[typesAfter.length - 1]) || $pos.parent
@@ -182,6 +204,11 @@ export function canSplit(doc, pos, depth = 1, typesAfter) {
 // parts split off will inherit the node type of the original node.
 // This can be changed by passing an array of types and attributes to
 // use after the split.
+//
+// @cn 分割给定位置的节点，如果传入了 `depth` 参数，且其大于 1，则任何数量的节点在它之上（？？？）。
+// 默认情况下，被分割部分的节点类型将会继承原始的节点类型，但是也可以通过传入一个类型数组和 attributes 来在分割后设置其上。
+//
+// @comment 这句英文原文也不通顺。
 Transform.prototype.split = function(pos, depth = 1, typesAfter) {
   let $pos = this.doc.resolve(pos), before = Fragment.empty, after = Fragment.empty
   for (let d = $pos.depth, e = $pos.depth - depth, i = depth - 1; d > e; d--, i--) {
@@ -195,6 +222,8 @@ Transform.prototype.split = function(pos, depth = 1, typesAfter) {
 // :: (Node, number) → bool
 // Test whether the blocks before and after a given position can be
 // joined.
+//
+// @cn 测试在给定位置之前或者之后的块级节点是否可以被连接起来。
 export function canJoin(doc, pos) {
   let $pos = doc.resolve(pos), index = $pos.index()
   return joinable($pos.nodeBefore, $pos.nodeAfter) &&
@@ -209,6 +238,9 @@ function joinable(a, b) {
 // Find an ancestor of the given position that can be joined to the
 // block before (or after if `dir` is positive). Returns the joinable
 // point, if any.
+//
+// @cn 寻找一个给定位置的祖先节点，该节点可以被连接到块级节点之前（或者之后，如果 `dir` 是正的话）。
+// 如果找到，返回这个可加入的位置。
 export function joinPoint(doc, pos, dir = -1) {
   let $pos = doc.resolve(pos)
   for (let d = $pos.depth;; d--) {
@@ -234,6 +266,8 @@ export function joinPoint(doc, pos, dir = -1) {
 // :: (number, ?number) → this
 // Join the blocks around the given position. If depth is 2, their
 // last and first siblings are also joined, and so on.
+//
+// @cn 将给定位置周围的块级元素连接起来。如果深度是 2，它们最后和第一个同级节点也会被连接，以此类推。
 Transform.prototype.join = function(pos, depth = 1) {
   let step = new ReplaceStep(pos - depth, pos + depth, Slice.empty, true)
   return this.step(step)
@@ -244,6 +278,9 @@ Transform.prototype.join = function(pos, depth = 1) {
 // near `pos`, by searching up the node hierarchy when `pos` itself
 // isn't a valid place but is at the start or end of a node. Return
 // null if no position was found.
+//
+// @cn 当 `pos` 本身不是有效的位置但位于节点的起始或结尾处时，通过搜索节点的层级结构，尝试找到一个可以在给定位置的节点附近插入给定节点类型的点。
+// 如果找不到位置，则返回 null。
 export function insertPoint(doc, pos, nodeType) {
   let $pos = doc.resolve(pos)
   if ($pos.parent.canReplaceWith($pos.index(), $pos.index(), nodeType)) return pos
@@ -267,6 +304,9 @@ export function insertPoint(doc, pos, nodeType) {
 // slice can be inserted. Will look at parent nodes' nearest boundary
 // and try there, even if the original position wasn't directly at the
 // start or end of that node. Returns null when no position was found.
+//
+// @cn 寻找一个位置在给定的位置或者附近，以让给定的 slice能够插入。即使原始的位置并不直接在父级节点的起始或者结束位置，
+// 也会尝试查看父级节点最近的边界然后尝试插入。如果找不到位置，则返回 null。
 export function dropPoint(doc, pos, slice) {
   let $pos = doc.resolve(pos)
   if (!slice.content.size) return pos
