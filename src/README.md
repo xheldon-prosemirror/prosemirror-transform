@@ -3,7 +3,7 @@ to be recorded, replayed, and reordered. You can read more about
 transformations in [the guide](/docs/guide/#transform).
 
 @cn 这个模块定义了一种修改文档的方式，以允许修改被记录、回放、重新排序。你可以在
-[中文指南](https://www.xheldon.com/prosemirror-guide-chinese.html) 的「transform」一节了解更多。
+[中文指南](https://xheldon.com/prosemirror-guide-chinese.html#document-transformations) 了解更多。
 
 ### Steps
 
