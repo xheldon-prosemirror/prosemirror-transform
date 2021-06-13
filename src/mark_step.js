@@ -19,8 +19,14 @@ export class AddMarkStep extends Step {
   // :: (number, number, Mark)
   constructor(from, to, mark) {
     super()
+    // :: number
+    // The start of the marked range.
     this.from = from
+    // :: number
+    // The end of the marked range.
     this.to = to
+    // :: Mark
+    // The mark to add.
     this.mark = mark
   }
 
@@ -28,7 +34,7 @@ export class AddMarkStep extends Step {
     let oldSlice = doc.slice(this.from, this.to), $from = doc.resolve(this.from)
     let parent = $from.node($from.sharedDepth(this.to))
     let slice = new Slice(mapFragment(oldSlice.content, (node, parent) => {
-      if (!parent.type.allowsMarkType(this.mark.type)) return node
+      if (!node.isAtom || !parent.type.allowsMarkType(this.mark.type)) return node
       return node.mark(this.mark.addToSet(node.marks))
     }, parent), oldSlice.openStart, oldSlice.openEnd)
     return StepResult.fromReplace(doc, this.from, this.to, slice)
@@ -73,8 +79,14 @@ export class RemoveMarkStep extends Step {
   // :: (number, number, Mark)
   constructor(from, to, mark) {
     super()
+    // :: number
+    // The start of the unmarked range.
     this.from = from
+    // :: number
+    // The end of the unmarked range.
     this.to = to
+    // :: Mark
+    // The mark to remove.
     this.mark = mark
   }
 
