@@ -1,3 +1,47 @@
+## 1.3.2 (2021-04-06)
+
+### Bug fixes
+
+Fix a regression in `dropPoint` that caused it to dereference undefined in some circumstances.
+
+## 1.3.1 (2021-04-01)
+
+### Bug fixes
+
+Fix a crash in `Transform.replaceRange` when called with under specific circumstances.
+
+Fix an issue where `dropPoint` could return an invalid drop point.
+
+## 1.3.0 (2021-03-31)
+
+### New features
+
+The various properties of subclasses of `Step` (`ReplaceStep`, `ReplaceAroundStep`, `AddMarkStep`, and `RemoveMarkStep`) are now part of the public interface.
+
+## 1.2.12 (2021-02-20)
+
+### Bug fixes
+
+Fix a bug where merging replace steps with the `structure` flag could create steps that couldn't be applied.
+
+## 1.2.11 (2021-02-06)
+
+### Bug fixes
+
+Fix an issue in `Transform.removeMark` where the mark type was passed through to be removed instead of the mark itself.
+
+## 1.2.10 (2021-02-05)
+
+### Bug fixes
+
+Fix an issue where `Transform.removeMark`, when given a mark type, would only remove the first instance from nodes that had multiple marks of the type.
+
+## 1.2.9 (2021-01-19)
+
+### Bug fixes
+
+Fix an issue where `AddMarkStep` would mark inline nodes with content.
+
 ## 1.2.8 (2020-08-11)
 
 ### Bug fixes

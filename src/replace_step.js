@@ -21,8 +21,14 @@ export class ReplaceStep extends Step {
   // 保证避免 rebased 的 replace step 意外覆盖了一些东西）。
   constructor(from, to, slice, structure) {
     super()
+    // :: number
+    // The start position of the replaced range.
     this.from = from
+    // :: number
+    // The end position of the replaced range.
     this.to = to
+    // :: Slice
+    // The slice to insert.
     this.slice = slice
     this.structure = !!structure
   }
@@ -48,7 +54,7 @@ export class ReplaceStep extends Step {
   }
 
   merge(other) {
-    if (!(other instanceof ReplaceStep) || other.structure != this.structure) return null
+    if (!(other instanceof ReplaceStep) || other.structure || this.structure) return null
 
     if (this.from + this.slice.size == other.from && !this.slice.openEnd && !other.slice.openStart) {
       let slice = this.slice.size + other.slice.size == 0 ? Slice.empty
@@ -95,11 +101,24 @@ export class ReplaceAroundStep extends Step {
   // `structure` 有与它在 [`ReplaceStep`](#transform.ReplaceStep) 类中相同的含义。
   constructor(from, to, gapFrom, gapTo, slice, insert, structure) {
     super()
+    // :: number
+    // The start position of the replaced range.
     this.from = from
+    // :: number
+    // The end position of the replaced range.
     this.to = to
+    // :: number
+    // The start of preserved range.
     this.gapFrom = gapFrom
+    // :: number
+    // The end of preserved range.
     this.gapTo = gapTo
+    // :: Slice
+    // The slice to insert.
     this.slice = slice
+    // :: number
+    // The position in the slice where the preserved range should be
+    // inserted.
     this.insert = insert
     this.structure = !!structure
   }

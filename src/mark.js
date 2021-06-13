@@ -53,8 +53,11 @@ Transform.prototype.removeMark = function(from, to, mark = null) {
     step++
     let toRemove = null
     if (mark instanceof MarkType) {
-      let found = mark.isInSet(node.marks)
-      if (found) toRemove = [found]
+      let set = node.marks, found
+      while (found = mark.isInSet(set)) {
+        ;(toRemove || (toRemove = [])).push(found)
+        set = found.removeFromSet(set)
+      }
     } else if (mark) {
       if (mark.isInSet(node.marks)) toRemove = [mark]
     } else {
