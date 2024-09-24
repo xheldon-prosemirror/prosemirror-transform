@@ -24,28 +24,48 @@ TransformError.prototype.name = "TransformError"
 /// Abstraction to build up and track an array of
 /// [steps](#transform.Step) representing a document transformation.
 ///
+/// @cn 为了构建和跟踪文档 transformation 的一系列 steps 的抽象。
+///
 /// Most transforming methods return the `Transform` object itself, so
 /// that they can be chained.
+///
+/// @cn 大多数的 transforming 方法返回 `Transform` 对象本身，因此它们可以链式调用。
 export class Transform {
   /// The steps in this transform.
+  ///
+  /// @cn transform 中的 steps 们。
   readonly steps: Step[] = []
   /// The documents before each of the steps.
+  ///
+  /// @cn 在每个 steps 开始之前的文档们。
   readonly docs: Node[] = []
   /// A mapping with the maps for each of the steps in this transform.
+  ///
+  /// @cn 一个 maps 了 transform 中的每一个 steps 的 mapping。
   readonly mapping: Mapping = new Mapping
 
   /// Create a transform that starts with the given document.
+  ///
+  /// @cn 新建一个起始于给定文档的 transform。
   constructor(
     /// The current document (the result of applying the steps in the
     /// transform).
+    ///
+    /// @cn 当前文档（即应用了 transform 中 steps 后的结果）。
     public doc: Node
   ) {}
 
   /// The starting document.
+  ///
+  /// @cn 起始文档。
   get before() { return this.docs.length ? this.docs[0] : this.doc }
 
   /// Apply a new step in this transform, saving the result. Throws an
   /// error when the step fails.
+  ///
+  /// @cn 对当前 transform 应用一个新的 step，然后保存结果。如果应用失败则抛出一个错误。
+  ///
+  /// @cn 错误的类叫做「TransformError」。
   step(step: Step) {
     let result = this.maybeStep(step)
     if (result.failed) throw new TransformError(result.failed)
@@ -54,6 +74,8 @@ export class Transform {
 
   /// Try to apply a step in this transformation, ignoring it if it
   /// fails. Returns the step result.
+  ///
+  /// @cn 尝试在当前 transformation 中应用一个 step，如果失败则忽略，否则返回 step result。
   maybeStep(step: Step) {
     let result = step.apply(this.doc)
     if (!result.failed) this.addStep(step, result.doc!)
@@ -62,6 +84,8 @@ export class Transform {
 
   /// True when the document has been changed (when there are any
   /// steps).
+  ///
+  /// @cn 如果文档被改变过（当有任何 step 的时候），则返回 true。
   get docChanged() {
     return this.steps.length > 0
   }
@@ -76,6 +100,8 @@ export class Transform {
 
   /// Replace the part of the document between `from` and `to` with the
   /// given `slice`.
+  ///
+  /// @cn 用给定的 slice 替换文档中从 `from` 到 `to` 的部分。
   replace(from: number, to = from, slice = Slice.empty): this {
     let step = replaceStep(this.doc, from, to, slice)
     if (step) this.step(step)
@@ -84,16 +110,22 @@ export class Transform {
 
   /// Replace the given range with the given content, which may be a
   /// fragment, node, or array of nodes.
+  ///
+  /// @cn 用给定的 content 替换文档中从 `from` 到 `to` 的部分，content 可以是一个 fragment，node，或者 node 的数组。
   replaceWith(from: number, to: number, content: Fragment | Node | readonly Node[]): this {
     return this.replace(from, to, new Slice(Fragment.from(content), 0, 0))
   }
 
   /// Delete the content between the given positions.
+  ///
+  /// @cn 删除文档中从 `from` 到 `to` 的部分。
   delete(from: number, to: number): this {
     return this.replace(from, to, Slice.empty)
   }
 
   /// Insert the given content at the given position.
+  ///
+  /// @cn 在给定的位置插入给定的 content。
   insert(pos: number, content: Fragment | Node | readonly Node[]): this {
     return this.replaceWith(pos, pos, content)
   }

@@ -3,14 +3,22 @@ import {Step, StepResult} from "./step"
 import {StepMap, Mappable} from "./map"
 
 /// Update an attribute in a specific node.
+///
+/// @cn 在给定的位置上的节点上更新一个属性。
 export class AttrStep extends Step {
   /// Construct an attribute step.
   constructor(
     /// The position of the target node.
+    ///
+    /// @cn 目标节点的位置。
     readonly pos: number,
     /// The attribute to set.
+    ///
+    /// @cn 要设置的属性。
     readonly attr: string,
-    // The attribute's new value.
+    /// The attribute's new value.
+    ///
+    /// @cn 属性的新值。
     readonly value: any
   ) {
     super()
@@ -53,12 +61,20 @@ export class AttrStep extends Step {
 Step.jsonID("attr", AttrStep)
 
 /// Update an attribute in the doc node.
+///
+/// @cn 在文档节点上更新一个属性。
 export class DocAttrStep extends Step {
   /// Construct an attribute step.
+  ///
+  /// @cn 新建一个文档属性 step。
   constructor(
     /// The attribute to set.
+    ///
+    /// @cn 要设置的属性。
     readonly attr: string,
-    // The attribute's new value.
+    /// The attribute's new value.
+    ///
+    /// @cn 属性的新值。
     readonly value: any
   ) {
     super()

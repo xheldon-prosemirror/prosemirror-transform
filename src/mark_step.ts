@@ -14,14 +14,24 @@ function mapFragment(fragment: Fragment, f: (child: Node, parent: Node, i: numbe
 }
 
 /// Add a mark to all inline content between two positions.
+///
+/// @cn 在给定的两个位置中的所有内联元素上添加一个 mark。
 export class AddMarkStep extends Step {
   /// Create a mark step.
+  ///
+  /// @cn 新建一个 mark step。
   constructor(
     /// The start of the marked range.
+    ///
+    /// @cn 被标记的 range 的开始位置。
     readonly from: number,
     /// The end of the marked range.
+    ///
+    /// @cn 被标记的 range 的结束位置。
     readonly to: number,
     /// The mark to add.
+    ///
+    /// @cn 要添加的 mark。
     readonly mark: Mark
   ) {
     super()
@@ -72,14 +82,24 @@ export class AddMarkStep extends Step {
 Step.jsonID("addMark", AddMarkStep)
 
 /// Remove a mark from all inline content between two positions.
+///
+/// @cn 在给定的两个位置中的所有内联元素上移除一个 mark。
 export class RemoveMarkStep extends Step {
   /// Create a mark-removing step.
+  ///
+  /// @cn 新建一个 mark 移除 step。
   constructor(
     /// The start of the unmarked range.
+    ///
+    /// @cn 被移除 mark 的 range 的开始位置。
     readonly from: number,
     /// The end of the unmarked range.
+    ///
+    /// @cn 被移除 mark 的 range 的结束位置。
     readonly to: number,
     /// The mark to remove.
+    ///
+    /// @cn 要移除的 mark。
     readonly mark: Mark
   ) {
     super()
@@ -128,12 +148,20 @@ export class RemoveMarkStep extends Step {
 Step.jsonID("removeMark", RemoveMarkStep)
 
 /// Add a mark to a specific node.
+///
+/// @cn 在给定的位置上的节点上添加一个 mark。
 export class AddNodeMarkStep extends Step {
   /// Create a node mark step.
+  ///
+  /// @cn 新建一个 node mark step。
   constructor(
     /// The position of the target node.
+    ///
+    /// @cn 目标节点的位置。
     readonly pos: number,
     /// The mark to add.
+    ///
+    /// @cn 要添加的 mark。
     readonly mark: Mark
   ) {
     super()
@@ -180,12 +208,18 @@ export class AddNodeMarkStep extends Step {
 Step.jsonID("addNodeMark", AddNodeMarkStep)
 
 /// Remove a mark from a specific node.
+///
+/// @cn 在给定的位置上的节点上移除一个 mark。
 export class RemoveNodeMarkStep extends Step {
   /// Create a mark-removing step.
   constructor(
     /// The position of the target node.
+    ///
+    /// @cn 目标节点的位置。
     readonly pos: number,
     /// The mark to remove.
+    ///
+    /// @cn 要移除的 mark。
     readonly mark: Mark
   ) {
     super()
